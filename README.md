@@ -12,7 +12,7 @@ http://spaceweather.com
 * Download a copy from github
 
 ```
-$ git clone https://github.com/fdphd15/save-image-files-from-urls.git
+$ git clone https://github.com/fdphd15/make-movie-from-imagefiles.git
 ```
 
 * Run the example

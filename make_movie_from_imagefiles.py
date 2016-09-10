@@ -87,9 +87,6 @@ if __name__ == "__main__":
     ax = []
     for aid, spg in enumerate(output_data['figure']['axes']['subplot2grid']):
         ax.append(plt.subplot2grid(spg[0], spg[1]))
-        ax[aid].set_axis_off()
-    #ax0 = plt.subplot2grid(output_data['figure']['axes']['ax0'])
-    #ax1 = plt.subplot2grid(output_data['figure']['axes']['ax1'])
     
     # Set up movie writer, then loop through each image file, load it into 
     # memory, plot it in a figure window, and then save the figure as a movie 
@@ -111,4 +108,4 @@ if __name__ == "__main__":
                 ax[if_id].imshow(img)
                 #plt.show()
                 # Store image as movie frame
-                writer.grab_frame()
+            writer.grab_frame()
