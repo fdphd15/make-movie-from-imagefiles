@@ -37,7 +37,7 @@ def get_spaceweather_imagefile(if_path, if_date, if_filename, if_extension, \
     """
     sw_imagefile = if_path + if_date + "_" + if_filename + if_extension
     if verbose:
-        print("Output image file full path: \n{}\n".format(sw_imagefile))
+        print("Input image file full path: \n{}\n".format(sw_imagefile))
     return sw_imagefile
 
 ## III) If this file is run from command line, execute script below
@@ -65,12 +65,14 @@ if __name__ == "__main__":
     output_data = { \
         'movie': { \
             'filename': "make_movie_test.mp4", \
-            'fps': 5, \
+            'fps': 3, \
             'dpi': 300
         }, \
         'figure': {
+            'title': "Sun images from spaceweather.com", \
             'axes': { \
-                'subplot2grid': [((1, 2), (0, 0)), ((1, 2), (0, 1))]
+                'subplot2grid': [((1, 2), (0, 0)), ((1, 2), (0, 1))], \
+                'title': ["Coronal Holes", "Sunspots"]
             }
         }, \
         'verbose': True
@@ -94,6 +96,11 @@ if __name__ == "__main__":
     with writer.saving(fig, output_data['movie']['filename'], \
             output_data['movie']['dpi']):
         for if_date in input_data['image']['file']['dates']:
+            if 'title' in output_data['figure']:
+                fig.suptitle( \
+                        output_data['figure']['title']+": "+if_date, \
+                        x=0.5, y=0.85, fontsize=14, fontweight='bold'
+                )
             for if_id, if_name in enumerate(input_data['image']['file']['name']):
                 sw_imagefile = get_spaceweather_imagefile( \
                         input_data['image']['path'], if_date, if_name, \
@@ -106,6 +113,9 @@ if __name__ == "__main__":
                 # etc. turned off
                 ax[if_id].set_axis_off()
                 ax[if_id].imshow(img)
+                ax[if_id].set_title( \
+                        output_data['figure']['axes']['title'][if_id]
+                )
                 #plt.show()
                 # Store image as movie frame
             writer.grab_frame()
