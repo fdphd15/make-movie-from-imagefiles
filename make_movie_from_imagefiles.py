@@ -40,6 +40,17 @@ def get_spaceweather_imagefile(if_path, if_date, if_filename, if_extension, \
         print("Input image file full path: \n{}\n".format(sw_imagefile))
     return sw_imagefile
 
+def load_spaceweather_imagefile(sw_imagefile):
+    """Load spaceweather image given input string specifying full path to file.
+    Return image object if successfull, or None if there is an OS error.
+    """
+    try: 
+        img = Image.open(sw_imagefile)
+    except OSError:
+        img = None
+        print("ERROR: Can't load image at {}".format(sw_imagefile))
+    return img
+
 ## III) If this file is run from command line, execute script below
 if __name__ == "__main__":
     ## Run script
@@ -64,8 +75,9 @@ if __name__ == "__main__":
     }
     output_data = { \
         'movie': { \
-            'filename': "make_movie_test.mp4", \
-            'fps': 3, \
+            'filename': "make_movie_test_br5000.mp4", \
+            'fps': 1, \
+            'bitrate': 5000, \
             'dpi': 300
         }, \
         'figure': {
@@ -82,7 +94,9 @@ if __name__ == "__main__":
     FFMpegWriter = manimation.writers['ffmpeg']
     #metadata = dict(title='Movie Test', artist='Matplotlib',
     #                       comment='Movie support!')
-    writer = FFMpegWriter(fps=output_data['movie']['fps'])
+    writer = FFMpegWriter(fps=output_data['movie']['fps'], \
+            bitrate=output_data['movie']['bitrate']
+    )
     
     # Make figure and axes objects
     fig = plt.figure()
@@ -108,11 +122,15 @@ if __name__ == "__main__":
                         output_data['verbose']
                 )
                 # Load image file
-                img = Image.open(sw_imagefile)
+                img = load_spaceweather_imagefile(sw_imagefile)
+                #Image.open(sw_imagefile)
                 # Plot image in appropriate subplot2grid axis with axis ticks,
                 # etc. turned off
                 ax[if_id].set_axis_off()
-                ax[if_id].imshow(img)
+                if img:
+                    ax[if_id].imshow(img)
+                else:
+                    ax[if_id].clear()
                 ax[if_id].set_title( \
                         output_data['figure']['axes']['title'][if_id]
                 )
