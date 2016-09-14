@@ -51,6 +51,22 @@ def load_spaceweather_imagefile(sw_imagefile):
         print("ERROR: Can't load image at {}\n".format(sw_imagefile))
     return img
 
+def set_axis_if_no_image(ax):
+    """This function is used to set the axis properties in the event that an
+    image file was not loaded correctly.  It currently clears the previous 
+    image, blanks all image spines, turns off all tick marks, and removes all
+    tick labels.  One should still be able to print a message on the axis.
+    """
+    ax.clear()
+    ax.spines['right'].set_color('none')
+    ax.spines['left'].set_color('none')
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_color('none')
+    ax.xaxis.set_ticks_position('none')
+    ax.yaxis.set_ticks_position('none')
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+
 ## III) If this file is run from command line, execute script below
 if __name__ == "__main__":
     ## Run script
@@ -130,11 +146,12 @@ if __name__ == "__main__":
                 if img:
                     ax[if_id].imshow(img)
                 else:
-                    ax[if_id].clear()
-                    ax[if_id].spines['right'].set_color('none')
-                    ax[if_id].spines['left'].set_color('none')
-                    ax[if_id].yaxis.set_ticks_position('none')
-                    ax[if_id].set_yticklabels([])
+                    set_axis_if_no_image(ax[if_id])
+                    #ax[if_id].clear()
+                    #ax[if_id].spines['right'].set_color('none')
+                    #ax[if_id].spines['left'].set_color('none')
+                    #ax[if_id].yaxis.set_ticks_position('none')
+                    #ax[if_id].set_yticklabels([])
                 ax[if_id].set_title( \
                         output_data['figure']['axes']['title'][if_id]
                 )
