@@ -48,7 +48,7 @@ def load_spaceweather_imagefile(sw_imagefile):
         img = Image.open(sw_imagefile)
     except OSError:
         img = None
-        print("ERROR: Can't load image at {}".format(sw_imagefile))
+        print("ERROR: Can't load image at {}\n".format(sw_imagefile))
     return img
 
 ## III) If this file is run from command line, execute script below
@@ -131,6 +131,10 @@ if __name__ == "__main__":
                     ax[if_id].imshow(img)
                 else:
                     ax[if_id].clear()
+                    ax[if_id].spines['right'].set_color('none')
+                    ax[if_id].spines['left'].set_color('none')
+                    ax[if_id].yaxis.set_ticks_position('none')
+                    ax[if_id].set_yticklabels([])
                 ax[if_id].set_title( \
                         output_data['figure']['axes']['title'][if_id]
                 )
