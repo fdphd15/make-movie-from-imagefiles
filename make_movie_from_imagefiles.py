@@ -51,11 +51,13 @@ def load_spaceweather_imagefile(sw_imagefile):
         print("ERROR: Can't load image at {}\n".format(sw_imagefile))
     return img
 
-def set_axis_if_no_image(ax):
+def set_axis_if_no_image(ax, bgcolor='white'):
     """This function is used to set the axis properties in the event that an
     image file was not loaded correctly.  It currently clears the previous 
     image, blanks all image spines, turns off all tick marks, and removes all
-    tick labels.  One should still be able to print a message on the axis.
+    tick labels.  Finally, the optional background color parameter is used to 
+    set the background facecolor.  
+    This should allow one to print a message on the axis.
     """
     ax.clear()
     ax.spines['right'].set_color('none')
@@ -66,6 +68,7 @@ def set_axis_if_no_image(ax):
     ax.yaxis.set_ticks_position('none')
     ax.set_xticklabels([])
     ax.set_yticklabels([])
+    ax.set_axis_bgcolor(bgcolor)
 
 ## III) If this file is run from command line, execute script below
 if __name__ == "__main__":
@@ -96,11 +99,18 @@ if __name__ == "__main__":
             'bitrate': 5000, \
             'dpi': 300
         }, \
-        'figure': {
+        'figure': { \
             'title': "Sun images from spaceweather.com", \
             'axes': { \
                 'subplot2grid': [((1, 2), (0, 0)), ((1, 2), (0, 1))], \
                 'title': ["Coronal Holes", "Sunspots"]
+            }, \
+            'savefig_kwargs': { \
+                'facecolor': 'black', \
+                'edgecolor': 'black'
+            }, \
+            'text': { \
+                'color': 'white'
             }
         }, \
         'verbose': True
@@ -129,7 +139,8 @@ if __name__ == "__main__":
             if 'title' in output_data['figure']:
                 fig.suptitle( \
                         output_data['figure']['title']+": "+if_date, \
-                        x=0.5, y=0.85, fontsize=14, fontweight='bold'
+                        x=0.5, y=0.85, fontsize=14, fontweight='bold', \
+                        color=output_data['figure']['text']['color']
                 )
             for if_id, if_name in enumerate(input_data['image']['file']['name']):
                 sw_imagefile = get_spaceweather_imagefile( \
@@ -146,15 +157,13 @@ if __name__ == "__main__":
                 if img:
                     ax[if_id].imshow(img)
                 else:
-                    set_axis_if_no_image(ax[if_id])
-                    #ax[if_id].clear()
-                    #ax[if_id].spines['right'].set_color('none')
-                    #ax[if_id].spines['left'].set_color('none')
-                    #ax[if_id].yaxis.set_ticks_position('none')
-                    #ax[if_id].set_yticklabels([])
+                    set_axis_if_no_image(ax[if_id], bgcolor= \
+                        output_data['figure']['savefig_kwargs']['facecolor']
+                    )
                 ax[if_id].set_title( \
-                        output_data['figure']['axes']['title'][if_id]
+                        output_data['figure']['axes']['title'][if_id], \
+                        color=output_data['figure']['text']['color']
                 )
                 #plt.show()
                 # Store image as movie frame
-            writer.grab_frame()
+            writer.grab_frame(**output_data['figure']['savefig_kwargs'])
