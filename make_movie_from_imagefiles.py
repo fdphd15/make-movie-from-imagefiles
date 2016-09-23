@@ -137,16 +137,8 @@ if __name__ == "__main__":
             ax_title_pos_ymax = ax_title_pos[aid]
             ax_title_pos_aid = aid
         ax[aid].set_axis_off()
-    # Find the axis title position closest to the top of the figure, in 
-    # the figure coordinate system, which is used to set the figure title 
-    disp_title_pos = ax[ax_title_pos_aid].transAxes.transform( \
-            ax_title_pos_ymax
-    )
-    fig_title_y = fig.transFigure.inverted().transform(disp_title_pos)[1]
-    print(ax_title_pos_aid)
-    print(ax_title_pos_ymax)
-    print(fig_title_y)
-
+    #print(ax_title_pos_aid)
+    #print(ax_title_pos_ymax)
     # Create movie writer
     FFMpegWriter = manimation.writers['ffmpeg']
     #metadata = dict(title='Movie Test', artist='Matplotlib',
@@ -159,14 +151,6 @@ if __name__ == "__main__":
     with writer.saving(fig, output_data['movie']['filename'], \
             output_data['movie']['dpi']):
         for if_date in input_data['image']['file']['dates']:
-            if 'title' in output_data['figure']:
-                fig.suptitle( \
-                        output_data['figure']['title']['string']+": "+if_date, \
-                        x=0.5, y=fig_title_y+\
-                        output_data['figure']['title']['space_from_axes_top'], \
-                        fontsize=14, fontweight='bold', \
-                        color=output_data['figure']['text']['color']
-                )
             for if_id, if_name in enumerate(input_data['image']['file']['name']):
                 sw_imagefile = get_spaceweather_imagefile_name( \
                         input_data['image']['path'], if_date, if_name, \
@@ -181,6 +165,24 @@ if __name__ == "__main__":
                     set_axis_if_no_image(ax[if_id], bgcolor= \
                         output_data['figure']['savefig_kwargs']['facecolor']
                     )
+            plt.draw()
+            # First, calculate the axis title position closest to the top of 
+            # the figure in the figure's coordinate system and then use it to 
+            # set the figure title.  Find a work around to not repeat this???
+            # Then, print the figure title
+            disp_title_pos = ax[ax_title_pos_aid].transAxes.transform( \
+                    ax_title_pos_ymax
+            )
+            fig_title_y = fig.transFigure.inverted().transform(disp_title_pos)[1]
+            #print(fig_title_y)
+            if 'title' in output_data['figure']:
+                fig.suptitle( \
+                        output_data['figure']['title']['string']+": "+if_date, \
+                        x=0.5, y=fig_title_y+\
+                        output_data['figure']['title']['space_from_axes_top'], \
+                        fontsize=14, fontweight='bold', \
+                        color=output_data['figure']['text']['color']
+                )
             # Store image as movie frame
-            writer.grab_frame(**output_data['figure']['savefig_kwargs'])        
-    #print(img)
+            writer.grab_frame(**output_data['figure']['savefig_kwargs'])
+
